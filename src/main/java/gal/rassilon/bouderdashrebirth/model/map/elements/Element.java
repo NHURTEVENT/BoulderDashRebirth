@@ -18,6 +18,7 @@ public abstract class Element implements iElement{
     Point position;
     Sprite sprite;
     int spriteCycle;
+    int level;
 
     public Point getPosition() {
         return position;
@@ -38,10 +39,17 @@ public abstract class Element implements iElement{
     
     @Override
     public void cycleSprite(){
-        spriteCycle = (spriteCycle+1)%3;
-        
+        spriteCycle = (spriteCycle+1)%8;
         sprite.CycleSprite(spriteCycle);
     }
     
+    @Override
+    public void setLevel(int level){
+        this.level = level;
+    }
     
+    @Override
+    public int getLevel(){
+        return  level;
+    }
 }

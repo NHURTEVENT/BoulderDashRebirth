@@ -16,4 +16,6 @@ public interface iElement {
     void setPosition(Point position);
     Sprite getSprite();
     void cycleSprite();
+    int getLevel();
+    void setLevel(int level);
 }

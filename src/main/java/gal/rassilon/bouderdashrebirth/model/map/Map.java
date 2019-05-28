@@ -10,6 +10,7 @@ import gal.rassilon.bouderdashrebirth.contracts.iDAO;
 import gal.rassilon.bouderdashrebirth.contracts.iElement;
 import gal.rassilon.bouderdashrebirth.contracts.iMap;
 import gal.rassilon.bouderdashrebirth.dao.DAO;
+import gal.rassilon.bouderdashrebirth.model.map.element.characters.Player;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
@@ -23,12 +24,20 @@ public class Map implements iMap{
     iElement[][] map;
     ArrayList<iElement> elementsOnTheMap;
     ArrayList<iCharacter> charactersOnTheMap;
+    iCharacter player;
     
     
 
     public Map() {
         iDAO dao = new DAO();
         map = dao.getMap();
+        charactersOnTheMap = dao.getCharactersList();
+        for(iCharacter c : charactersOnTheMap){
+            if(c instanceof Player){
+                this.player = c;
+            }
+        }
+        
         elementsOnTheMap = dao.getMapList();
         this.size = new Dimension(dao.getSize());
         //this.size = new Dimension(500,500);
@@ -48,7 +57,7 @@ public class Map implements iMap{
 
     @Override
     public iCharacter getPlayer() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return player;
     }
 
     @Override

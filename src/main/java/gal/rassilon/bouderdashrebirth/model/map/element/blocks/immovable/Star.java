@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gal.rassilon.bouderdashrebirth.model.map.element.blocks.movable;
+package gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable;
 
 import gal.rassilon.bouderdashrebirth.contracts.Direction;
 import gal.rassilon.bouderdashrebirth.contracts.Sprite;
-import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Wall;
+import gal.rassilon.bouderdashrebirth.contracts.iImmovable;
+import gal.rassilon.bouderdashrebirth.contracts.iMovable;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,13 +24,13 @@ import javax.swing.ImageIcon;
  *
  * @author Nico
  */
-public class Diamond extends MovableBlock{
+public class Star extends ImmovableBlock{
 
-    public Diamond() {
+    public Star() {
     }
-    
-        @Override
-    public void setLevel(int level){
+
+    @Override
+    public void setLevel(int level) {
         super.setLevel(level);
         HashMap<Direction, ArrayList<Icon>> map = new HashMap<>();
         ArrayList<Icon> images = new ArrayList<>();
@@ -38,21 +39,21 @@ public class Diamond extends MovableBlock{
             source = ImageIO.read(new File("pics/spritesheet.png"));
 
             Icon icon = new ImageIcon("pics/spritesheet.png");
-            icon = new ImageIcon(source.getSubimage(4*16, (level-1)*4*16+0*16, 16, 16));
+            icon = new ImageIcon(source.getSubimage(12 * 16, (level-1) * 4 * 16 + 0 * 16, 16, 16));
             images.add(icon);
-            Icon icon2 = new ImageIcon(source.getSubimage(4*16, (level-1)*4*16+0*16, 16, 16));
+            Icon icon2 = new ImageIcon(source.getSubimage(12 * 16, (level-1) * 4 * 16 + 0 * 16, 16, 16));
             images.add(icon2);
-            Icon icon3 = new ImageIcon(source.getSubimage(4*16, (level-1)*4*16+1*16, 16, 16));
+            Icon icon3 = new ImageIcon(source.getSubimage(12 * 16, (level-1) * 4 * 16 + 1 * 16, 16, 16));
             images.add(icon3);
-            Icon icon4 = new ImageIcon(source.getSubimage(4*16, (level-1)*4*16+1*16, 16, 16));
+            Icon icon4 = new ImageIcon(source.getSubimage(12 * 16, (level-1) * 4 * 16 + 1 * 16, 16, 16));
             images.add(icon4);
-            Icon icon5 = new ImageIcon(source.getSubimage(4*16, (level-1)*4*16+2*16, 16, 16));
+            Icon icon5 = new ImageIcon(source.getSubimage(12 * 16, (level-1) * 4 * 16 + 2 * 16, 16, 16));
             images.add(icon5);
-            Icon icon6 = new ImageIcon(source.getSubimage(4*16, (level-1)*4*16+2*16, 16, 16));
+            Icon icon6 = new ImageIcon(source.getSubimage(12 * 16, (level-1) * 4 * 16 + 2 * 16, 16, 16));
             images.add(icon6);
-            Icon icon7 = new ImageIcon(source.getSubimage(4*16, (level-1)*4*16+3*16, 16, 16));
+            Icon icon7 = new ImageIcon(source.getSubimage(12 * 16, (level-1) * 4 * 16 + 3 * 16, 16, 16));
             images.add(icon7);
-            Icon icon8 = new ImageIcon(source.getSubimage(4*16, (level-1)*4*16+3*16, 16, 16));
+            Icon icon8 = new ImageIcon(source.getSubimage(12 * 16, (level-1) * 4 * 16 + 3 * 16, 16, 16));
             images.add(icon8);
             map.put(Direction.STAND, images);
             ArrayList<Icon> destructionAnimation = new ArrayList<>();
@@ -63,5 +64,4 @@ public class Diamond extends MovableBlock{
             Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 }

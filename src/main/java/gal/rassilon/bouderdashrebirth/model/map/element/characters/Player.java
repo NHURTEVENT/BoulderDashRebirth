@@ -41,31 +41,48 @@ public class Player extends Character implements iPlayer{
     }
 
     public Player() {
-    HashMap<Direction, ArrayList<Icon>> map = new HashMap<>();
+   
+    }
+    
+    @Override
+    public void setLevel(int level) {
+        super.setLevel(level);
+        HashMap<Direction, ArrayList<Icon>> map = new HashMap<>();
         ArrayList<Icon> images = new ArrayList<>();
         BufferedImage source;
         try {
-            source = ImageIO.read(new File("pics/spritesheet.png"));
+            source = ImageIO.read(new File("pics/hero.png"));
 
-            Icon icon = new ImageIcon("pics/spritesheet.png");
-            icon = new ImageIcon(source.getSubimage(10*16, 0, 16, 16));
+            Icon icon = new ImageIcon("pics/hero.png");
+            icon = new ImageIcon(source.getSubimage(0 * 16, 0 * 16, 16, 16));
             images.add(icon);
-            Icon icon2 = new ImageIcon(source.getSubimage(10*16, 1*16, 16, 16));
+            Icon icon2 = new ImageIcon(source.getSubimage(0 * 16, 0 * 16, 16, 16));
             images.add(icon2);
-            Icon icon3 = new ImageIcon(source.getSubimage(10*16, 2*16, 16, 16));
+            Icon icon3 = new ImageIcon(source.getSubimage(0 * 16, 1 * 16, 16, 16));
             images.add(icon3);
-            Icon icon4 = new ImageIcon(source.getSubimage(10*16, 3*16, 16, 16));
+            Icon icon4 = new ImageIcon(source.getSubimage(0 * 16, 1 * 16, 16, 16));
             images.add(icon4);
+            Icon icon5 = new ImageIcon(source.getSubimage(0 * 16, 2 * 16, 16, 16));
+            images.add(icon5);
+            Icon icon6 = new ImageIcon(source.getSubimage(0 * 16, 2 * 16, 16, 16));
+            images.add(icon6);
+            Icon icon7 = new ImageIcon(source.getSubimage(0 * 16, 3 * 16, 16, 16));
+            images.add(icon7);
+            Icon icon8 = new ImageIcon(source.getSubimage(0 * 16, 3 * 16, 16, 16));
+            images.add(icon8);
             map.put(Direction.STAND, images);
+            
+            //other images, really find why arraylist won't take new instances before
+            
+            
             ArrayList<Icon> destructionAnimation = new ArrayList<>();
             destructionAnimation.add(icon);
-            setSprite(new Sprite('O', map, destructionAnimation));
+            setSprite(new Sprite('_', map, destructionAnimation));
             //this.sprite = 
         } catch (IOException ex) {
             Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
     
     
 }

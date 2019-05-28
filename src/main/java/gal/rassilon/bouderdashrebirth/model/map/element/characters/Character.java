@@ -18,8 +18,24 @@ public abstract class Character extends Element implements iCharacter{
 
     @Override
     public void move(Direction direction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch(direction){
+            case UP:
+                setPosition(new Point(getPosition().x, getPosition().y-1));
+                break;
+            case DOWN:
+                setPosition(new Point(getPosition().x, getPosition().y+1));
+                break;
+            case RIGHT:
+                setPosition(new Point(getPosition().x+1, getPosition().y));
+                break;
+            case LEFT:
+                setPosition(new Point(getPosition().x-1, getPosition().y));
+                break;
+            case STAND:
+                break;
+        }
     }
+    
 
     @Override
     public void die() {

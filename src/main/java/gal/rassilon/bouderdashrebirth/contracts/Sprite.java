@@ -27,11 +27,10 @@ public class Sprite {
     }
 
     public void CycleSprite(int cycleNumber){
-        this.cycleNumber = cycleNumber%3;
+        this.cycleNumber = cycleNumber%8;
     }
     
     public Icon getStandingIcon(){
-        Icon i = imageMap.get(Direction.STAND).get(cycleNumber);
         return imageMap.get(Direction.STAND).get(cycleNumber);
     }
 }

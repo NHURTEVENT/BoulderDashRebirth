@@ -9,6 +9,6 @@ package gal.rassilon.bouderdashrebirth.contracts;
  *
  * @author Nico
  */
-public interface iView {
-    
+public interface iView{
+    void translate(iCharacter character, Direction direction);
 }

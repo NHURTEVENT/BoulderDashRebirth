@@ -26,9 +26,14 @@ import javax.swing.ImageIcon;
  *
  * @author Nico
  */
-public class Boulder extends MovableBlock{
+public class Boulder extends MovableBlock {
 
     public Boulder() {
+    }
+
+    @Override
+    public void setLevel(int level) {
+        super.setLevel(level);
         HashMap<Direction, ArrayList<Icon>> map = new HashMap<>();
         ArrayList<Icon> images = new ArrayList<>();
         BufferedImage source;
@@ -36,24 +41,29 @@ public class Boulder extends MovableBlock{
             source = ImageIO.read(new File("pics/spritesheet.png"));
 
             Icon icon = new ImageIcon("pics/spritesheet.png");
-            icon = new ImageIcon(source.getSubimage(3*16, 0, 16, 16));
+            icon = new ImageIcon(source.getSubimage(3 * 16, (level - 1) * 4 * 16 + 0 * 16, 16, 16));
             images.add(icon);
-            Icon icon2 = new ImageIcon(source.getSubimage(3*16, 1*16, 16, 16));
+            Icon icon2 = new ImageIcon(source.getSubimage(3 * 16, (level - 1) * 4 * 16 + 0 * 16, 16, 16));
             images.add(icon2);
-            Icon icon3 = new ImageIcon(source.getSubimage(3*16, 2*16, 16, 16));
+            Icon icon3 = new ImageIcon(source.getSubimage(3 * 16, (level - 1) * 4 * 16 + 1 * 16, 16, 16));
             images.add(icon3);
-            Icon icon4 = new ImageIcon(source.getSubimage(3*16, 3*16, 16, 16));
+            Icon icon4 = new ImageIcon(source.getSubimage(3 * 16, (level - 1) * 4 * 16 + 1 * 16, 16, 16));
             images.add(icon4);
+            Icon icon5 = new ImageIcon(source.getSubimage(3 * 16, (level - 1) * 4 * 16 + 2 * 16, 16, 16));
+            images.add(icon5);
+            Icon icon6 = new ImageIcon(source.getSubimage(3 * 16, (level - 1) * 4 * 16 + 2 * 16, 16, 16));
+            images.add(icon6);
+            Icon icon7 = new ImageIcon(source.getSubimage(3 * 16, (level - 1) * 4 * 16 + 3 * 16, 16, 16));
+            images.add(icon7);
+            Icon icon8 = new ImageIcon(source.getSubimage(3 * 16, (level - 1) * 4 * 16 + 3 * 16, 16, 16));
+            images.add(icon8);
             map.put(Direction.STAND, images);
             ArrayList<Icon> destructionAnimation = new ArrayList<>();
             destructionAnimation.add(icon);
-            setSprite(new Sprite('O', map, destructionAnimation));
+            setSprite(new Sprite('_', map, destructionAnimation));
             //this.sprite = 
         } catch (IOException ex) {
             Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
     }
-
-    
 }

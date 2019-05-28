@@ -24,7 +24,7 @@ public class BoulderDashRebirth {
     public static void main(String[] args) {
         // TODO code application logic here
         iMap map = new Map();
-        iView view = new MapView(map);
+        MapView view = new MapView(map);
         iController controller = new MainController(map, view);
         controller.start();
     }

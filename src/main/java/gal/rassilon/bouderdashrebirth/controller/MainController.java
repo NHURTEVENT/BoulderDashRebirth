@@ -5,22 +5,28 @@
  */
 package gal.rassilon.bouderdashrebirth.controller;
 
+import gal.rassilon.bouderdashrebirth.contracts.Direction;
 import gal.rassilon.bouderdashrebirth.contracts.iController;
 import gal.rassilon.bouderdashrebirth.contracts.iMap;
 import gal.rassilon.bouderdashrebirth.contracts.iView;
+import gal.rassilon.bouderdashrebirth.view.MapView;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
  * @author Nico
  */
-public class MainController implements iController, Runnable{
+public class MainController implements iController, Runnable, Observer{
 
     iMap map;
     iView view;
 
-    public MainController(iMap map, iView view) {
+    public MainController(iMap map, MapView view) {
         this.map = map;
         this.view = view;
+        view.addObserver(this);
+        
     }
     
     @Override
@@ -58,5 +64,15 @@ public class MainController implements iController, Runnable{
     public void start(){
         run();
     }
+
+    @Override
+    public void update(Observable o, Object arg) {
+            if(arg instanceof Direction){
+                System.out.println(arg.toString());
+                map.getPlayer().move((Direction)arg);
+                view.translate(map.getPlayer(), (Direction)arg);
+            }
+    }
+
     
 }
