@@ -5,6 +5,7 @@
  */
 package gal.rassilon.bouderdashrebirth.contracts;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 
 /**
@@ -12,5 +13,10 @@ import java.util.ArrayList;
  * @author Nico
  */
 public interface iDAO {
-    ArrayList<iElement> getMap();
+    iElement[][] getMap();
+    ArrayList<iElement> getMapList();
+    ArrayList<iBlock> getBlocksList();
+    ArrayList<iCharacter> getCharactersList();
+    int getLevel();
+    Dimension getSize();
 }

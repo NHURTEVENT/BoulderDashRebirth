@@ -14,5 +14,5 @@ import java.awt.Point;
 public interface iElement {
     Point getPosition();
     void setPosition(Point position);
-    Sprite getSprite(Direction direction);
+    Sprite getSprite();
 }

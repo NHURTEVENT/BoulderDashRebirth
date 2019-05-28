@@ -27,10 +27,13 @@ public abstract class Element implements iElement{
     }
 
     @Override
-    public Sprite getSprite(Direction direction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Sprite getSprite() {
+        return sprite;
     }
     
+    public void setSprite(Sprite sprite){
+        this.sprite = sprite;
+    }
     
     
 }
