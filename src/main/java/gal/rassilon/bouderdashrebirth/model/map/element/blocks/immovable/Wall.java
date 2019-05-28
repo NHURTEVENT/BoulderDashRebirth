@@ -35,6 +35,12 @@ public class Wall extends ImmovableBlock{
         Icon icon = new ImageIcon("pics/spritesheet.png");
         icon = new ImageIcon(source.getSubimage(0, 0, 16, 16));
         images.add(icon);
+        Icon icon2 = new ImageIcon(source.getSubimage(0, 0, 16, 16));
+        images.add(icon2);
+        Icon icon3 = new ImageIcon(source.getSubimage(0, 0, 16, 16));
+        images.add(icon3);
+        Icon icon4 = new ImageIcon(source.getSubimage(0, 0, 16, 16));
+        images.add(icon4);
         map.put(Direction.STAND, images);
         ArrayList<Icon> destructionAnimation = new ArrayList<>();
         destructionAnimation.add(icon);

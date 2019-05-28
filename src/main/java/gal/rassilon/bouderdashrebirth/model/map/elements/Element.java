@@ -17,6 +17,7 @@ import java.awt.Point;
 public abstract class Element implements iElement{
     Point position;
     Sprite sprite;
+    int spriteCycle;
 
     public Point getPosition() {
         return position;
@@ -33,6 +34,13 @@ public abstract class Element implements iElement{
     
     public void setSprite(Sprite sprite){
         this.sprite = sprite;
+    }
+    
+    @Override
+    public void cycleSprite(){
+        spriteCycle = (spriteCycle+1)%3;
+        
+        sprite.CycleSprite(spriteCycle);
     }
     
     

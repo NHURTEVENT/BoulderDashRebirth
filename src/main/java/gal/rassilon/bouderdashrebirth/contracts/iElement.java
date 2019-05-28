@@ -15,4 +15,5 @@ public interface iElement {
     Point getPosition();
     void setPosition(Point position);
     Sprite getSprite();
+    void cycleSprite();
 }

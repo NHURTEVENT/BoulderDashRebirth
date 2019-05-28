@@ -15,6 +15,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,19 +25,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  *
  * @author Nico
  */
-public class MapView extends JFrame implements iView {
+public class MapView extends JFrame implements iView, ActionListener {
 
     iMap map;
+    JLabel[][] labelArray;
+    JPanel mainPanel;
 
     public MapView(iMap map) {
         this.map = map;
+        this.labelArray = new JLabel[map.getSize().height][map.getSize().width];
         this.setSize(new Dimension(map.getSize().width*15, map.getSize().height*15));
-        JPanel mainPanel = new JPanel();
+        mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(map.getSize().height, map.getSize().width));
         //mainPanel.setLayout(new FlowLayout());
         this.add(mainPanel);
@@ -58,13 +64,36 @@ public class MapView extends JFrame implements iView {
             for (int j=0; j<map.getSize().width;j++) {
                 iElement e = map.getMap()[i][j];
                 JLabel label4 = new JLabel(e.getSprite().getStandingIcon());
+                labelArray[i][j] = label4;
                 mainPanel.add(label4);
             }
         }
-        
+        Timer timer = new Timer(500,this);
+        timer.setInitialDelay(0);
+        timer.start();
         this.setVisible(true);
 
         //mainPanel.add(new JLabel(image))
     }
 
+    public void doAnimation(){
+        for (int i=0; i<map.getSize().height;i++) {
+            for (int j=0; j<map.getSize().width;j++) {
+                iElement e = map.getMap()[i][j];
+                e.cycleSprite();
+                JLabel label4 = labelArray[i][j];
+                label4.setIcon(e.getSprite().getStandingIcon());
+                Image img = (Image) label4.getIcon();
+                Image dimg = img.getScaledInstance(label4.getWidth(), label4.getHeight(),Image.SCALE_SMOOTH);
+                label4.setIcon(new ImageIcon(dimg));
+            }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        doAnimation();
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
 }

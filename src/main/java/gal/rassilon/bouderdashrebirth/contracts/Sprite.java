@@ -18,6 +18,7 @@ public class Sprite {
     char consoleImage;
     HashMap<Direction, ArrayList<Icon>> imageMap;
     ArrayList<Icon> destructionAnimation;
+    int cycleNumber;
 
     public Sprite(char consoleImage, HashMap<Direction, ArrayList<Icon>> imageMap, ArrayList<Icon> destructionAnimation) {
         this.consoleImage = consoleImage;
@@ -25,7 +26,12 @@ public class Sprite {
         this.destructionAnimation = destructionAnimation;
     }
 
+    public void CycleSprite(int cycleNumber){
+        this.cycleNumber = cycleNumber%3;
+    }
+    
     public Icon getStandingIcon(){
-        return imageMap.get(Direction.STAND).get(0);
+        Icon i = imageMap.get(Direction.STAND).get(cycleNumber);
+        return imageMap.get(Direction.STAND).get(cycleNumber);
     }
 }

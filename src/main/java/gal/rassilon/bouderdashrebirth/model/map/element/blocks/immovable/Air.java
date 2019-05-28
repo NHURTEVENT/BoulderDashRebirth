@@ -32,12 +32,18 @@ public class Air extends ImmovableBlock {
             source = ImageIO.read(new File("pics/spritesheet.png"));
 
             Icon icon = new ImageIcon("pics/spritesheet.png");
-            icon = new ImageIcon(source.getSubimage(0, 16, 16, 16));
+            icon = new ImageIcon(source.getSubimage(2*16, 0, 16, 16));
             images.add(icon);
+            Icon icon2 = new ImageIcon(source.getSubimage(2*16, 1*16, 16, 16));
+            images.add(icon2);
+            Icon icon3 = new ImageIcon(source.getSubimage(2*16, 2*16, 16, 16));
+            images.add(icon3);
+            Icon icon4 = new ImageIcon(source.getSubimage(2*16, 3*16, 16, 16));
+            images.add(icon4);
             map.put(Direction.STAND, images);
             ArrayList<Icon> destructionAnimation = new ArrayList<>();
             destructionAnimation.add(icon);
-            setSprite(new Sprite('|', map, destructionAnimation));
+            setSprite(new Sprite('_', map, destructionAnimation));
             //this.sprite = 
         } catch (IOException ex) {
             Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
