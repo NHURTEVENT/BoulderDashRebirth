@@ -5,17 +5,23 @@
  */
 package gal.rassilon.bouderdashrebirth.view;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import gal.rassilon.bouderdashrebirth.contracts.Direction;
 import gal.rassilon.bouderdashrebirth.contracts.iCharacter;
 import gal.rassilon.bouderdashrebirth.contracts.iElement;
 import gal.rassilon.bouderdashrebirth.contracts.iMap;
 import gal.rassilon.bouderdashrebirth.contracts.iView;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Air;
 import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Wall;
+import gal.rassilon.bouderdashrebirth.model.map.element.characters.Player;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.LayoutManager;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -23,6 +29,9 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Observable;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -188,16 +197,23 @@ public class MapView extends Observable implements iView, ActionListener, Compon
     public void keyReleased(KeyEvent e) {
     }
 
-    @Override
-    public void translate(iCharacter element, Direction direction) {
+    //@Override
+    public ListenableFuture<Void> translate(Point position, JLabel labelIn, JLabel labelOut, Direction direction) {
         //Animation anim = new Animation(element, direction);
-        element.move(direction);
+        //JLabel label = labelArray[position.y][position.x];
+        ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
+        ListenableFuture future = service.submit(new Runnable() {
+            @Override
+            public void run(){
+            
+        iElement foundElement = map.getMap()[position.y][position.x];
+        //element.move(direction);
         boolean b = SwingUtilities.isEventDispatchThread();
         SwingWorker<Animation, Void> worker = new SwingWorker<Animation, Void>() {
             @Override
             protected Animation doInBackground() throws Exception {
                 LayoutManager layout = mainPanel.getLayout();
-                mainPanel.setLayout(null);
+                //mainPanel.setLayout(null);
                 int hFactor = 0;
                 int vFactor = 0;
                 switch (direction) {
@@ -218,22 +234,50 @@ public class MapView extends Observable implements iView, ActionListener, Compon
                         vFactor = 0;
                         break;
                 }
-                for (int i = 0; i < 16; i++) {
+
+                ImageIcon icon = (ImageIcon) labelIn.getIcon();
+                labelIn.setIcon(new Air(map.getLevel()).getSprite().getStandingIcon());
+                labelOut.setIcon(new Air(map.getLevel()).getSprite().getStandingIcon());
+                int size = icon.getIconHeight();
+                for (int i = 0; i < size; i++) {
                     Graphics g = mainPanel.getGraphics();
-                    ImageIcon icon = (ImageIcon) element.getSprite().getStandingIcon();
-                    g.drawImage(icon.getImage(), 16 * element.getPosition().x + i * hFactor, 16 * element.getPosition().y + i * vFactor, null);
+                    int iconWidth = icon.getIconWidth();
+                    int iconHeight = icon.getIconHeight();
+                    int x = (int)((mainPanel.getBounds().width)/2.0
+                            - (map.getSize().width * iconWidth)/2.0)
+                            + iconWidth * position.x + i * hFactor;
+                    int y = (int)((mainPanel.getBounds().height)/2.0
+                            - (map.getSize().height * iconHeight)/2.0)
+                            + iconHeight * position.y + i * vFactor;
+                    //get size, divide /2, ajoute nb case/2 * iconsize
+                    /*g.drawImage(icon.getImage(), (int)(
+                            mainPanel.getBounds().width/2.0-map.getSize().width/2.0*icon.getIconWidth())
+                            + size * position.x + i * hFactor,
+                            (int)(mainPanel.getBounds().height/2.0-map.getSize().height/2.0*icon.getIconHeight())
+                                    + size * position.y + i * vFactor, null);*/
+                    g.drawImage(icon.getImage(), x, y, null);
+                    //g.drawImage(icon.getImage(), size * element.getPosition().x + i * hFactor, size * element.getPosition().y + i * vFactor, null);
                     System.out.println("translate");
-                    Boolean b = SwingUtilities.isEventDispatchThread();
-                    System.out.println(b);
-                    Thread.sleep(500/16);
+                    //Boolean b = SwingUtilities.isEventDispatchThread();
+                    //System.out.println(b);
+                    Thread.sleep(500 / size);
                 }
-                mainPanel.setLayout(layout);
+                //labelOut.setIcon(new Player().getSprite().getStandingIcon());
+                //mainPanel.setLayout(layout);
                 return null;
             }
         };
         worker.execute();
+        }
+        });
+        return future;
     }
 
+    @Override
+    public JLabel[][] getLabels(){
+        return labelArray;
+    }
+    
     private class Animation /*extends SwingWorker<Void, Void>*/ {
 
         iElement element;

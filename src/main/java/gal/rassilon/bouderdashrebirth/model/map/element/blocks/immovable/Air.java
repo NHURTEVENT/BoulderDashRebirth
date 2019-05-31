@@ -25,7 +25,10 @@ import javax.swing.ImageIcon;
 public class Air extends ImmovableBlock {
 
     public Air() {
-        
+    }
+
+    public Air(int level) {
+        setLevel(level);
     }
     
     @Override

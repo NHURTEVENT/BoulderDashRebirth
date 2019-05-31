@@ -25,12 +25,14 @@ public class Map implements iMap{
     ArrayList<iElement> elementsOnTheMap;
     ArrayList<iCharacter> charactersOnTheMap;
     iCharacter player;
+    int level;
     
     
 
     public Map() {
         iDAO dao = new DAO();
         map = dao.getMap();
+        level = dao.getLevel();
         charactersOnTheMap = dao.getCharactersList();
         for(iCharacter c : charactersOnTheMap){
             if(c instanceof Player){
@@ -68,5 +70,10 @@ public class Map implements iMap{
     @Override
     public iElement[][] getMap(){
         return map;
+    }
+
+    @Override
+    public int getLevel() {
+        return level;
     }
 }

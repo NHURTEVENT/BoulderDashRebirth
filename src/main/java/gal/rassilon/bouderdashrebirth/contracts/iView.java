@@ -5,10 +5,16 @@
  */
 package gal.rassilon.bouderdashrebirth.contracts;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import java.awt.Point;
+import javax.swing.JLabel;
+
 /**
  *
  * @author Nico
  */
 public interface iView{
-    void translate(iCharacter character, Direction direction);
+    ListenableFuture<Void> translate(Point position, JLabel labelIn, JLabel labelOut, Direction direction);
+    JLabel[][] getLabels();
+
 }

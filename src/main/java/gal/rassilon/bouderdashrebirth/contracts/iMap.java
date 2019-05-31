@@ -7,6 +7,7 @@ package gal.rassilon.bouderdashrebirth.contracts;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import javax.swing.JLabel;
 
 /**
  *
@@ -17,5 +18,6 @@ public interface iMap {
     ArrayList<iCharacter> getMobs();
     iCharacter getPlayer();
     Dimension getSize();
+    int getLevel();
     iElement[][] getMap();
 }

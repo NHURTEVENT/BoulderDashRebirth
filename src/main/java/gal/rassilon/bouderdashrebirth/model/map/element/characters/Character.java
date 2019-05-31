@@ -18,7 +18,7 @@ public abstract class Character extends Element implements iCharacter{
 
     @Override
     public void move(Direction direction) {
-        switch(direction){
+        /*switch(direction){
             case UP:
                 setPosition(new Point(getPosition().x, getPosition().y-1));
                 break;
@@ -33,7 +33,7 @@ public abstract class Character extends Element implements iCharacter{
                 break;
             case STAND:
                 break;
-        }
+        }*/
     }
     
 

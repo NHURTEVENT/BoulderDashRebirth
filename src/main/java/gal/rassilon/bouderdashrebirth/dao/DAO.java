@@ -117,7 +117,7 @@ public class DAO implements iDAO {
                         //System.out.println("r "+row+" l "+line+" "+ch);
                         iElement element = MapElementFactory.createElement(ch);
                         element.setLevel(level);
-                        element.setPosition(new Point(row, line));
+                        element.setPosition(new Point(line, row));
                         map[row][line] = element;
                         mapList.add(element);
                         if (element instanceof iCharacter) {
