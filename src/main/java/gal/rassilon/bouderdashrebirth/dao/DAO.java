@@ -9,6 +9,7 @@ import gal.rassilon.bouderdashrebirth.contracts.iBlock;
 import gal.rassilon.bouderdashrebirth.contracts.iCharacter;
 import gal.rassilon.bouderdashrebirth.contracts.iDAO;
 import gal.rassilon.bouderdashrebirth.contracts.iElement;
+import gal.rassilon.bouderdashrebirth.contracts.iPlayer;
 import gal.rassilon.bouderdashrebirth.model.map.MapElementFactory;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -29,6 +30,7 @@ import java.util.logging.Logger;
 public class DAO implements iDAO {
 
     iElement[][] map;
+    iPlayer player;
     ArrayList<iElement> mapList;
     ArrayList<iBlock> blocksList;
     ArrayList<iCharacter> charactersList;
@@ -45,8 +47,10 @@ public class DAO implements iDAO {
         return level;
     }
 
-    
-    
+    public iPlayer getPlayer() {
+        return player;
+    }
+
     @Override
     public iElement[][] getMap() {
         load();
@@ -121,8 +125,11 @@ public class DAO implements iDAO {
                         map[row][line] = element;
                         mapList.add(element);
                         if (element instanceof iCharacter) {
-                            charactersList.add((iCharacter) element);
-
+                            if(element instanceof iPlayer){
+                                player = (iPlayer)element;
+                            } else {
+                                charactersList.add((iCharacter) element);
+                            }
                         } else if (element instanceof iBlock) {
                             blocksList.add((iBlock) element);
                         }

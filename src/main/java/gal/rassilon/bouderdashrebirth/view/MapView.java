@@ -32,6 +32,8 @@ import java.util.Observable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -47,7 +49,8 @@ import javax.swing.Timer;
  */
 public class MapView extends Observable implements iView, ActionListener, ComponentListener, KeyListener {
 
-    private static int REFRESH_TIMER = 200;
+    private static int REFRESH_TIMER = 500;
+    private static int CLOCK_SPEED = 500;
     iMap map;
     JLabel[][] labelArray;
     JPanel mainPanel;
@@ -198,7 +201,7 @@ public class MapView extends Observable implements iView, ActionListener, Compon
     }
 
     //@Override
-    public ListenableFuture<Void> translate(Point position, JLabel labelIn, JLabel labelOut, Direction direction) {
+    public ListenableFuture<Void> translate(Point position, ImageIcon icon, Direction direction) {
         //Animation anim = new Animation(element, direction);
         //JLabel label = labelArray[position.y][position.x];
         ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
@@ -206,14 +209,10 @@ public class MapView extends Observable implements iView, ActionListener, Compon
             @Override
             public void run(){
             
-        iElement foundElement = map.getMap()[position.y][position.x];
+        //iElement foundElement = map.getMap()[position.y][position.x];
         //element.move(direction);
         boolean b = SwingUtilities.isEventDispatchThread();
-        SwingWorker<Animation, Void> worker = new SwingWorker<Animation, Void>() {
-            @Override
-            protected Animation doInBackground() throws Exception {
-                LayoutManager layout = mainPanel.getLayout();
-                //mainPanel.setLayout(null);
+        
                 int hFactor = 0;
                 int vFactor = 0;
                 switch (direction) {
@@ -234,10 +233,6 @@ public class MapView extends Observable implements iView, ActionListener, Compon
                         vFactor = 0;
                         break;
                 }
-
-                ImageIcon icon = (ImageIcon) labelIn.getIcon();
-                labelIn.setIcon(new Air(map.getLevel()).getSprite().getStandingIcon());
-                labelOut.setIcon(new Air(map.getLevel()).getSprite().getStandingIcon());
                 int size = icon.getIconHeight();
                 for (int i = 0; i < size; i++) {
                     Graphics g = mainPanel.getGraphics();
@@ -249,26 +244,22 @@ public class MapView extends Observable implements iView, ActionListener, Compon
                     int y = (int)((mainPanel.getBounds().height)/2.0
                             - (map.getSize().height * iconHeight)/2.0)
                             + iconHeight * position.y + i * vFactor;
-                    //get size, divide /2, ajoute nb case/2 * iconsize
-                    /*g.drawImage(icon.getImage(), (int)(
-                            mainPanel.getBounds().width/2.0-map.getSize().width/2.0*icon.getIconWidth())
-                            + size * position.x + i * hFactor,
-                            (int)(mainPanel.getBounds().height/2.0-map.getSize().height/2.0*icon.getIconHeight())
-                                    + size * position.y + i * vFactor, null);*/
                     g.drawImage(icon.getImage(), x, y, null);
-                    //g.drawImage(icon.getImage(), size * element.getPosition().x + i * hFactor, size * element.getPosition().y + i * vFactor, null);
                     System.out.println("translate");
-                    //Boolean b = SwingUtilities.isEventDispatchThread();
-                    //System.out.println(b);
-                    Thread.sleep(500 / size);
+            try {
+                //Boolean b = SwingUtilities.isEventDispatchThread();
+                //System.out.println(b);
+                Thread.sleep(CLOCK_SPEED / size);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MapView.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 }
                 //labelOut.setIcon(new Player().getSprite().getStandingIcon());
                 //mainPanel.setLayout(layout);
-                return null;
+                //return null;
             }
-        };
-        worker.execute();
-        }
+        
+        
         });
         return future;
     }

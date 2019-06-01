@@ -34,11 +34,12 @@ public class Map implements iMap{
         map = dao.getMap();
         level = dao.getLevel();
         charactersOnTheMap = dao.getCharactersList();
-        for(iCharacter c : charactersOnTheMap){
+        /*for(iCharacter c : charactersOnTheMap){
             if(c instanceof Player){
                 this.player = c;
             }
-        }
+        }*/
+        this.player = dao.getPlayer();
         
         elementsOnTheMap = dao.getMapList();
         this.size = new Dimension(dao.getSize());
@@ -54,7 +55,7 @@ public class Map implements iMap{
 
     @Override
     public ArrayList<iCharacter> getMobs() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return charactersOnTheMap;
     }
 
     @Override

@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public interface iDAO {
     iElement[][] getMap();
+    iPlayer getPlayer();
     ArrayList<iElement> getMapList();
     ArrayList<iBlock> getBlocksList();
     ArrayList<iCharacter> getCharactersList();

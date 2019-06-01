@@ -7,6 +7,7 @@ package gal.rassilon.bouderdashrebirth.contracts;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.awt.Point;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 /**
@@ -14,7 +15,7 @@ import javax.swing.JLabel;
  * @author Nico
  */
 public interface iView{
-    ListenableFuture<Void> translate(Point position, JLabel labelIn, JLabel labelOut, Direction direction);
+    ListenableFuture<Void> translate(Point position, ImageIcon icon, Direction direction);
     JLabel[][] getLabels();
 
 }

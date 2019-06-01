@@ -21,6 +21,8 @@ import java.util.Observer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -77,7 +79,7 @@ public class MainController implements iController, Runnable, Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (arg instanceof Direction) {
-            System.out.println(arg.toString());
+            /*System.out.println(arg.toString());
             Point p = map.getPlayer().getPosition();
             JLabel labelOut = getOutLabel(p, (Direction)arg);
             ListenableFuture<Void> future = view.translate(p, view.getLabels()[p.y][p.x], labelOut, (Direction) arg);
@@ -85,6 +87,7 @@ public class MainController implements iController, Runnable, Observer {
             Futures.addCallback(future, new FutureCallback() {
                 @Override
                 public void onSuccess(Object v) {
+                    
                     moveElement((Direction) arg, map.getPlayer());
                 }
 
@@ -92,11 +95,13 @@ public class MainController implements iController, Runnable, Observer {
                 public void onFailure(Throwable thrwbl) {
                     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
-            });
+            });*/
+            moveElement((Direction) arg, map.getPlayer());
+            moveElement((Direction) arg, map.getMobs().get(0));
         }
     }
-    
-    private JLabel getOutLabel(Point position, Direction direction){
+
+    private JLabel getOutLabel(Point position, Direction direction) {
         switch (direction) {
             case UP:
                 //air setposition
@@ -109,49 +114,89 @@ public class MainController implements iController, Runnable, Observer {
                 return view.getLabels()[position.y][position.x - 1];
             case STAND:
                 return view.getLabels()[position.y][position.x];
-            default :
+            default:
                 return view.getLabels()[position.y][position.x];
         }
     }
 
     public void moveElement(Direction direction, iElement element) {
-        iElement air = new Air(map.getLevel());
-        switch (direction) {
-            case UP:
-                map.getMap()[element.getPosition().y - 1][element.getPosition().x] = element;
-                map.getMap()[element.getPosition().y][element.getPosition().x] = air;
-                //air setposition
-                //view.getLabels()[element.getPosition().y - 1][element.getPosition().x].setIcon(element.getSprite().getStandingIcon());
-                //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
-                element.setPosition(new Point(element.getPosition().x, element.getPosition().y - 1));
-                break;
-            case DOWN:
-                map.getMap()[element.getPosition().y + 1][element.getPosition().x] = element;
-                map.getMap()[element.getPosition().y][element.getPosition().x] = air;
-                //air setposition
-                //view.getLabels()[element.getPosition().y + 1][element.getPosition().x].setIcon(element.getSprite().getStandingIcon());
-                //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
-                element.setPosition(new Point(element.getPosition().x, element.getPosition().y + 1));
-                break;
-            case RIGHT:
-                map.getMap()[element.getPosition().y][element.getPosition().x + 1] = element;
-                map.getMap()[element.getPosition().y][element.getPosition().x] = new Air(map.getLevel());
-                //view.getLabels()[element.getPosition().y][element.getPosition().x + 1].setIcon(element.getSprite().getStandingIcon());
-                //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
-                //air setposition
-                element.setPosition(new Point(element.getPosition().x + 1, element.getPosition().y));
-                break;
-            case LEFT:
-                map.getMap()[element.getPosition().y][element.getPosition().x - 1] = element;
-                map.getMap()[element.getPosition().y][element.getPosition().x] = new Air(map.getLevel());
-                //view.getLabels()[element.getPosition().y][element.getPosition().x - 1].setIcon(element.getSprite().getStandingIcon());
-                //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
-                //air setposition
-                element.setPosition(new Point(element.getPosition().x - 1, element.getPosition().y));
-                break;
-            case STAND:
-                break;
-        }
-    }
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                Boolean b = SwingUtilities.isEventDispatchThread();
+                iElement air = new Air(map.getLevel());
+                Point p = element.getPosition();
+                ImageIcon icon = (ImageIcon) view.getLabels()[p.y][p.x].getIcon();
 
+                switch (direction) {
+                    case UP:
+                        map.getMap()[element.getPosition().y][element.getPosition().x] = air;
+                        map.getMap()[element.getPosition().y - 1][element.getPosition().x] = air;
+                        //air setposition
+                        //view.getLabels()[element.getPosition().y - 1][element.getPosition().x].setIcon(element.getSprite().getStandingIcon());
+                        //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
+
+                        element.setPosition(new Point(element.getPosition().x, element.getPosition().y - 1));
+                        break;
+                    case DOWN:
+                        map.getMap()[element.getPosition().y][element.getPosition().x] = air;
+                        map.getMap()[element.getPosition().y + 1][element.getPosition().x] = air;
+                        //air setposition
+                        //view.getLabels()[element.getPosition().y + 1][element.getPosition().x].setIcon(element.getSprite().getStandingIcon());
+                        //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
+                        element.setPosition(new Point(element.getPosition().x, element.getPosition().y + 1));
+                        break;
+                    case RIGHT:
+                        map.getMap()[element.getPosition().y][element.getPosition().x] = air;
+                        map.getMap()[element.getPosition().y][element.getPosition().x + 1] = air;
+                        //view.getLabels()[element.getPosition().y][element.getPosition().x + 1].setIcon(element.getSprite().getStandingIcon());
+                        //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
+                        //air setposition
+                        element.setPosition(new Point(element.getPosition().x + 1, element.getPosition().y));
+                        break;
+                    case LEFT:
+                        map.getMap()[element.getPosition().y][element.getPosition().x] = air;
+                        map.getMap()[element.getPosition().y][element.getPosition().x - 1] = air;
+                        //view.getLabels()[element.getPosition().y][element.getPosition().x - 1].setIcon(element.getSprite().getStandingIcon());
+                        //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
+                        //air setposition
+                        element.setPosition(new Point(element.getPosition().x - 1, element.getPosition().y));
+                        break;
+                    case STAND:
+                        break;
+                }
+                ListenableFuture<Void> future = view.translate(p, icon, direction);
+
+                Futures.addCallback(future, new FutureCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void v) {
+                        /*switch (direction) {
+                    case UP:
+                        map.getMap()[element.getPosition().y - 1][element.getPosition().x] = element;
+                        break;
+                    case DOWN:
+                        map.getMap()[element.getPosition().y + 1][element.getPosition().x] = element;
+                        break;
+                    case RIGHT:
+                        map.getMap()[element.getPosition().y][element.getPosition().x + 1] = element;
+                        break;
+                    case LEFT:
+                        map.getMap()[element.getPosition().y][element.getPosition().x - 1] = element;
+                        break;
+                    case STAND:
+                        break;
+                }*/
+                        map.getMap()[element.getPosition().y][element.getPosition().x] = element;
+                    }
+
+                    @Override
+                    public void onFailure(Throwable thrwbl) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+                });
+                return null;
+            }
+        };
+        worker.execute();
+    }
 }
