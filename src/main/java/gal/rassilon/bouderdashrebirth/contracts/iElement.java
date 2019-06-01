@@ -18,4 +18,6 @@ public interface iElement {
     void cycleSprite();
     int getLevel();
     void setLevel(int level);
+    boolean isTraversable();
+    void setTraversable(boolean b);
 }

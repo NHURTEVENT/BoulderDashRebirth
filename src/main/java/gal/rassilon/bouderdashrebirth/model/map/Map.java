@@ -9,6 +9,7 @@ import gal.rassilon.bouderdashrebirth.contracts.iCharacter;
 import gal.rassilon.bouderdashrebirth.contracts.iDAO;
 import gal.rassilon.bouderdashrebirth.contracts.iElement;
 import gal.rassilon.bouderdashrebirth.contracts.iMap;
+import gal.rassilon.bouderdashrebirth.contracts.iMovable;
 import gal.rassilon.bouderdashrebirth.dao.DAO;
 import gal.rassilon.bouderdashrebirth.model.map.element.characters.Player;
 import java.awt.Dimension;
@@ -24,6 +25,7 @@ public class Map implements iMap{
     iElement[][] map;
     ArrayList<iElement> elementsOnTheMap;
     ArrayList<iCharacter> charactersOnTheMap;
+    ArrayList<iMovable> bouldersOnTheMap;
     iCharacter player;
     int level;
     
@@ -33,6 +35,7 @@ public class Map implements iMap{
         iDAO dao = new DAO();
         map = dao.getMap();
         level = dao.getLevel();
+        bouldersOnTheMap = dao.getBouldersList();
         charactersOnTheMap = dao.getCharactersList();
         /*for(iCharacter c : charactersOnTheMap){
             if(c instanceof Player){
@@ -46,7 +49,10 @@ public class Map implements iMap{
         //this.size = new Dimension(500,500);
     }
     
-    
+    @Override
+    public ArrayList<iMovable> getBoulders(){
+        return bouldersOnTheMap;
+    }
     
     @Override
     public ArrayList<iElement> getElements() {

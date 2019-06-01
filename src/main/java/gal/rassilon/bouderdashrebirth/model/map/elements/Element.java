@@ -19,11 +19,25 @@ public abstract class Element implements iElement{
     Sprite sprite;
     int spriteCycle;
     int level;
+    boolean traversable;
+    
+    @Override
+    public boolean isTraversable(){
+        return traversable;
+    }
 
+    @Override
+    public void setTraversable(boolean traversable) {
+        this.traversable = traversable;
+    }
+    
+
+    @Override
     public Point getPosition() {
         return position;
     }
 
+    @Override
     public void setPosition(Point position) {
         this.position = position;
     }

@@ -9,8 +9,10 @@ import gal.rassilon.bouderdashrebirth.contracts.iBlock;
 import gal.rassilon.bouderdashrebirth.contracts.iCharacter;
 import gal.rassilon.bouderdashrebirth.contracts.iDAO;
 import gal.rassilon.bouderdashrebirth.contracts.iElement;
+import gal.rassilon.bouderdashrebirth.contracts.iMovable;
 import gal.rassilon.bouderdashrebirth.contracts.iPlayer;
 import gal.rassilon.bouderdashrebirth.model.map.MapElementFactory;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.movable.Boulder;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.FileInputStream;
@@ -31,8 +33,9 @@ public class DAO implements iDAO {
 
     iElement[][] map;
     iPlayer player;
-    ArrayList<iElement> mapList;
     ArrayList<iBlock> blocksList;
+    ArrayList<iMovable> boulders;
+    ArrayList<iElement> mapList;
     ArrayList<iCharacter> charactersList;
     Dimension size;
     int level;
@@ -71,6 +74,11 @@ public class DAO implements iDAO {
     public ArrayList<iCharacter> getCharactersList() {
         return charactersList;
     }
+    
+    @Override
+    public ArrayList<iMovable> getBouldersList(){
+        return boulders;
+    }
 
     public void load() {
         int width = 0;
@@ -78,6 +86,7 @@ public class DAO implements iDAO {
         mapList = new ArrayList<>();
         charactersList = new ArrayList<>();
         blocksList = new ArrayList<>();
+        boulders = new ArrayList<>();
         try {
             //read file
             InputStream in = new FileInputStream("Level1.txt");
@@ -131,6 +140,9 @@ public class DAO implements iDAO {
                                 charactersList.add((iCharacter) element);
                             }
                         } else if (element instanceof iBlock) {
+                            if(element instanceof Boulder){
+                                boulders.add((iMovable) element);
+                            }
                             blocksList.add((iBlock) element);
                         }
 

@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 public class Diamond extends MovableBlock{
 
     public Diamond() {
+        setTraversable(true);
     }
     
         @Override

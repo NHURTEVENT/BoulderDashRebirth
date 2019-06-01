@@ -17,6 +17,7 @@ public interface iDAO {
     iPlayer getPlayer();
     ArrayList<iElement> getMapList();
     ArrayList<iBlock> getBlocksList();
+    ArrayList<iMovable> getBouldersList();
     ArrayList<iCharacter> getCharactersList();
     int getLevel();
     Dimension getSize();

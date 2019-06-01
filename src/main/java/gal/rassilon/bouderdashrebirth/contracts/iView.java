@@ -17,5 +17,5 @@ import javax.swing.JLabel;
 public interface iView{
     ListenableFuture<Void> translate(Point position, ImageIcon icon, Direction direction);
     JLabel[][] getLabels();
-
+    void doAnimation();
 }

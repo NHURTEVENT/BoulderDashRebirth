@@ -47,7 +47,7 @@ import javax.swing.Timer;
  *
  * @author Nico
  */
-public class MapView extends Observable implements iView, ActionListener, ComponentListener, KeyListener {
+public class MapView extends Observable implements iView, ComponentListener, KeyListener {
 
     private static int REFRESH_TIMER = 500;
     private static int CLOCK_SPEED = 500;
@@ -56,6 +56,7 @@ public class MapView extends Observable implements iView, ActionListener, Compon
     JPanel mainPanel;
     JFrame mainFrame;
     Direction direction;
+    private static ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
 
     public MapView(iMap map) {
         this.map = map;
@@ -90,9 +91,9 @@ public class MapView extends Observable implements iView, ActionListener, Compon
                 mainPanel.add(label4);
             }
         }
-        Timer timer = new Timer(REFRESH_TIMER, this);
+        /*Timer timer = new Timer(REFRESH_TIMER, this);
         timer.setInitialDelay(0);
-        timer.start();
+        timer.start();*/
         mainFrame.setVisible(true);
 
         //mainPanel.add(new JLabel(image))
@@ -115,14 +116,10 @@ public class MapView extends Observable implements iView, ActionListener, Compon
                 }
             }
         }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        doAnimation();
         mainPanel.revalidate();
         mainPanel.repaint();
     }
+
 
     @Override
     public void componentResized(ComponentEvent e) {
@@ -204,7 +201,7 @@ public class MapView extends Observable implements iView, ActionListener, Compon
     public ListenableFuture<Void> translate(Point position, ImageIcon icon, Direction direction) {
         //Animation anim = new Animation(element, direction);
         //JLabel label = labelArray[position.y][position.x];
-        ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
+        ListeningExecutorService service = MoreExecutors.listeningDecorator(EXECUTOR);
         ListenableFuture future = service.submit(new Runnable() {
             @Override
             public void run(){
@@ -245,7 +242,6 @@ public class MapView extends Observable implements iView, ActionListener, Compon
                             - (map.getSize().height * iconHeight)/2.0)
                             + iconHeight * position.y + i * vFactor;
                     g.drawImage(icon.getImage(), x, y, null);
-                    System.out.println("translate");
             try {
                 //Boolean b = SwingUtilities.isEventDispatchThread();
                 //System.out.println(b);

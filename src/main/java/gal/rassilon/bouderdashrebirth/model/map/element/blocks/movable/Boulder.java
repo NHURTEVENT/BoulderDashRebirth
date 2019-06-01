@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 public class Boulder extends MovableBlock {
 
     public Boulder() {
+        setTraversable(false);
     }
 
     @Override

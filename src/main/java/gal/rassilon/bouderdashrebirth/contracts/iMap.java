@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 public interface iMap {
     ArrayList<iElement> getElements();
     ArrayList<iCharacter> getMobs();
+    ArrayList<iMovable> getBoulders();
     iCharacter getPlayer();
     Dimension getSize();
     int getLevel();

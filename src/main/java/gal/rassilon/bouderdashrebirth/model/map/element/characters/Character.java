@@ -16,6 +16,12 @@ import java.awt.Point;
  */
 public abstract class Character extends Element implements iCharacter{
 
+    public Character() {
+        setTraversable(true);
+    }
+
+    
+    
     @Override
     public void move(Direction direction) {
         /*switch(direction){

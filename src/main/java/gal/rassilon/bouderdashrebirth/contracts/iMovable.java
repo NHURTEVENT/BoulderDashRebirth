@@ -10,5 +10,5 @@ package gal.rassilon.bouderdashrebirth.contracts;
  * @author Nico
  */
 public interface iMovable extends iBlock{
-    void move(Direction direction);
+    //void move(Direction direction);
 }
