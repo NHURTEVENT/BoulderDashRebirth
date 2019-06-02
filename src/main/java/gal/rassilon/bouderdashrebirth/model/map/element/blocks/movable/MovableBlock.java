@@ -17,8 +17,22 @@ import java.awt.Point;
  * @author Nico
  */
 public  class MovableBlock extends Block implements iMovable{
+    boolean locked;
+    
+    
     /*@Override
     public void move(Direction direction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }*/
+
+    @Override
+    public boolean isLocked() {
+        return locked;
+    }
+
+    @Override
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
 }

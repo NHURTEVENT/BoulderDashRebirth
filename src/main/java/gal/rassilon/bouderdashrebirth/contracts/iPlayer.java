@@ -13,4 +13,7 @@ public interface iPlayer extends iCharacter{
     boolean hasKey();
     int getDiamondCount();
     int getScore();
+    void setHasKey(boolean b);
+    void setScore(int score);
+    void setDiamondCount(int count);
 }

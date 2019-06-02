@@ -11,4 +11,6 @@ package gal.rassilon.bouderdashrebirth.contracts;
  */
 public interface iMovable extends iBlock{
     //void move(Direction direction);
+    void setLocked(boolean locked);
+    boolean isLocked();
 }

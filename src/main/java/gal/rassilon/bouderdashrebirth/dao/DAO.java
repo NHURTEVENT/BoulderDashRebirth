@@ -13,6 +13,7 @@ import gal.rassilon.bouderdashrebirth.contracts.iMovable;
 import gal.rassilon.bouderdashrebirth.contracts.iPlayer;
 import gal.rassilon.bouderdashrebirth.model.map.MapElementFactory;
 import gal.rassilon.bouderdashrebirth.model.map.element.blocks.movable.Boulder;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.movable.MovableBlock;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.FileInputStream;
@@ -140,7 +141,7 @@ public class DAO implements iDAO {
                                 charactersList.add((iCharacter) element);
                             }
                         } else if (element instanceof iBlock) {
-                            if(element instanceof Boulder){
+                            if(element instanceof MovableBlock){
                                 boulders.add((iMovable) element);
                             }
                             blocksList.add((iBlock) element);

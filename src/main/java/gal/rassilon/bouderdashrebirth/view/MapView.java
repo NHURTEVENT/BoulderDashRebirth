@@ -14,10 +14,14 @@ import gal.rassilon.bouderdashrebirth.contracts.iElement;
 import gal.rassilon.bouderdashrebirth.contracts.iMap;
 import gal.rassilon.bouderdashrebirth.contracts.iView;
 import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Air;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Star;
 import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Wall;
+import gal.rassilon.bouderdashrebirth.model.map.element.characters.Mob;
 import gal.rassilon.bouderdashrebirth.model.map.element.characters.Player;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.LayoutManager;
@@ -56,6 +60,7 @@ public class MapView extends Observable implements iView, ComponentListener, Key
     JPanel mainPanel;
     JFrame mainFrame;
     Direction direction;
+    JLabel labelScoreNum;
     private static ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
 
     public MapView(iMap map) {
@@ -65,8 +70,19 @@ public class MapView extends Observable implements iView, ComponentListener, Key
         mainFrame.setSize(new Dimension(map.getSize().width * 15, map.getSize().height * 15));
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(map.getSize().height, map.getSize().width));
-        //mainPanel.setLayout(new FlowLayout());
+        //to display score (layout will be broken)
+        //recomment this
         mainFrame.add(mainPanel);
+        //decomment this and line 110
+        /*
+        JPanel parentPanel = new JPanel();
+        //mainPanel.setLayout(new FlowLayout());
+        //parentPanel.add(mainPanel);
+        parentPanel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        
+        mainFrame.add(parentPanel);
+        parentPanel.add(mainPanel, c);*/
         mainFrame.addKeyListener(this);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Icon icon = new ImageIcon("pics/spritesheet.png");
@@ -91,6 +107,17 @@ public class MapView extends Observable implements iView, ComponentListener, Key
                 mainPanel.add(label4);
             }
         }
+        //uncomment this to display score
+        labelScoreNum = new JLabel("0");
+        /*
+        JLabel labelScoreString = new JLabel("Score: ");
+        parentPanel.add(labelScoreString, c);
+        c.gridy = map.getSize().height + 1;
+
+        c.gridy = map.getSize().height + 2;
+
+        parentPanel.add(labelScoreNum, c);
+        */
         /*Timer timer = new Timer(REFRESH_TIMER, this);
         timer.setInitialDelay(0);
         timer.start();*/
@@ -120,6 +147,9 @@ public class MapView extends Observable implements iView, ComponentListener, Key
         mainPanel.repaint();
     }
 
+    public void setScore(int score) {
+        labelScoreNum.setText("" + score);
+    }
 
     @Override
     public void componentResized(ComponentEvent e) {
@@ -197,6 +227,55 @@ public class MapView extends Observable implements iView, ComponentListener, Key
     public void keyReleased(KeyEvent e) {
     }
 
+    public void doMobDeathAnimation(iElement e) {
+        Graphics g = mainPanel.getGraphics();
+        if (e instanceof Mob) {
+            /*SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {*/
+            Star star = new Star();
+            star.setLevel(1);
+            int labelHeight = labelArray[0][0].getHeight();
+            int labelWidth = labelArray[0][0].getWidth();
+            ImageIcon icon = (ImageIcon) star.getSprite().getStandingIcon();
+            icon = new ImageIcon(icon.getImage().getScaledInstance(labelWidth, labelHeight, Image.SCALE_SMOOTH));
+            int iconHeight = icon.getIconHeight();
+            int iconWidth = icon.getIconWidth();
+
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    //view.getLabels()[e.getPosition().y - 1][e.getPosition().x-1].setIcon(star.getSprite().getStandingIcon());
+                    int x = (int) ((mainPanel.getBounds().width) / 2.0
+                            - (map.getSize().width * iconWidth) / 2.0)
+                            + iconWidth * (e.getPosition().x - 1) + iconWidth * i;
+                    int y = (int) ((mainPanel.getBounds().height) / 2.0
+                            - (map.getSize().height * iconHeight) / 2.0)
+                            + iconHeight * (e.getPosition().y - 1) + iconHeight * j;
+                    g.drawImage(icon.getImage(), x, y, null);
+                    //map.getMap()[e.getPosition().y-1][e.getPosition().x-1] = star;
+
+                }
+            }
+            try {
+                Thread.sleep(CLOCK_SPEED);
+                //return null;
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MapView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //}
+
+            /*@Override
+                protected void done() {
+                    super.done(); //To change body of generated methods, choose Tools | Templates.
+                }*/
+            //};
+            //worker.run();
+        } else {
+            System.out.println("we tried to kill " + e.toString() + " and it shouldn't have happenned");
+        }
+
+    }
+
     //@Override
     public ListenableFuture<Void> translate(Point position, ImageIcon icon, Direction direction) {
         //Animation anim = new Animation(element, direction);
@@ -204,12 +283,12 @@ public class MapView extends Observable implements iView, ComponentListener, Key
         ListeningExecutorService service = MoreExecutors.listeningDecorator(EXECUTOR);
         ListenableFuture future = service.submit(new Runnable() {
             @Override
-            public void run(){
-            
-        //iElement foundElement = map.getMap()[position.y][position.x];
-        //element.move(direction);
-        boolean b = SwingUtilities.isEventDispatchThread();
-        
+            public void run() {
+
+                //iElement foundElement = map.getMap()[position.y][position.x];
+                //element.move(direction);
+                boolean b = SwingUtilities.isEventDispatchThread();
+
                 int hFactor = 0;
                 int vFactor = 0;
                 switch (direction) {
@@ -235,36 +314,35 @@ public class MapView extends Observable implements iView, ComponentListener, Key
                     Graphics g = mainPanel.getGraphics();
                     int iconWidth = icon.getIconWidth();
                     int iconHeight = icon.getIconHeight();
-                    int x = (int)((mainPanel.getBounds().width)/2.0
-                            - (map.getSize().width * iconWidth)/2.0)
+                    int x = (int) ((mainPanel.getBounds().width) / 2.0
+                            - (map.getSize().width * iconWidth) / 2.0)
                             + iconWidth * position.x + i * hFactor;
-                    int y = (int)((mainPanel.getBounds().height)/2.0
-                            - (map.getSize().height * iconHeight)/2.0)
+                    int y = (int) ((mainPanel.getBounds().height) / 2.0
+                            - (map.getSize().height * iconHeight) / 2.0)
                             + iconHeight * position.y + i * vFactor;
                     g.drawImage(icon.getImage(), x, y, null);
-            try {
-                //Boolean b = SwingUtilities.isEventDispatchThread();
-                //System.out.println(b);
-                Thread.sleep(CLOCK_SPEED / size);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(MapView.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                    try {
+                        //Boolean b = SwingUtilities.isEventDispatchThread();
+                        //System.out.println(b);
+                        Thread.sleep(CLOCK_SPEED / size);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MapView.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 //labelOut.setIcon(new Player().getSprite().getStandingIcon());
                 //mainPanel.setLayout(layout);
                 //return null;
             }
-        
-        
+
         });
         return future;
     }
 
     @Override
-    public JLabel[][] getLabels(){
+    public JLabel[][] getLabels() {
         return labelArray;
     }
-    
+
     private class Animation /*extends SwingWorker<Void, Void>*/ {
 
         iElement element;

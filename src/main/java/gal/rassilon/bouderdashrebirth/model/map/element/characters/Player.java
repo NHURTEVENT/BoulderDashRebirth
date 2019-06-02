@@ -25,19 +25,39 @@ import javax.swing.ImageIcon;
  * @author Nico
  */
 public class Player extends Character implements iPlayer{
+    
+    int diamondCount;
+    boolean hasKey;
+    int score;
+
+    @Override
+    public void setDiamondCount(int diamondCount) {
+        this.diamondCount = diamondCount;
+    }
+
+    @Override
+    public void setHasKey(boolean hasKey) {
+        this.hasKey = hasKey;
+    }
+
+    @Override
+    public void setScore(int score) {
+        this.score = score;
+    }
+    
     @Override
     public boolean hasKey() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return hasKey;
     }
 
     @Override
     public int getDiamondCount() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return diamondCount;
     }
 
     @Override
     public int getScore() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return score;
     }
 
     public Player() {

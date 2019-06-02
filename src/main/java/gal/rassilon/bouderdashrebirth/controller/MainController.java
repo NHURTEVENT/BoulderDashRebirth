@@ -17,6 +17,12 @@ import gal.rassilon.bouderdashrebirth.contracts.iMovable;
 import gal.rassilon.bouderdashrebirth.contracts.iPlayer;
 import gal.rassilon.bouderdashrebirth.contracts.iView;
 import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Air;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Dirt;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.immovable.Star;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.movable.Boulder;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.movable.Diamond;
+import gal.rassilon.bouderdashrebirth.model.map.element.blocks.movable.MovableBlock;
+import gal.rassilon.bouderdashrebirth.model.map.element.characters.Mob;
 import gal.rassilon.bouderdashrebirth.view.MapView;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -39,6 +45,7 @@ public class MainController implements iController, Runnable, Observer, ActionLi
     iMap map;
     iView view;
     private static int REFRESH_TIMER = 500;
+    boolean gameOver;
 
     public MainController(iMap map, MapView view) {
         this.map = map;
@@ -61,10 +68,33 @@ public class MainController implements iController, Runnable, Observer, ActionLi
 
     @Override
     public void applyGravity() {
-        for(iMovable m : map.getBoulders()){
-            iElement e = map.getMap()[m.getPosition().y+1][m.getPosition().x];
-            if(e instanceof Air || e instanceof iCharacter){
-                moveElement(Direction.DOWN, m);
+        for (iMovable m : map.getBoulders()) {
+            iElement eDown = map.getMap()[m.getPosition().y + 1][m.getPosition().x];
+            iElement eRight = map.getMap()[m.getPosition().y][m.getPosition().x + 1];
+            iElement eDownRight = map.getMap()[m.getPosition().y + 1][m.getPosition().x + 1];
+            iElement eLeft = map.getMap()[m.getPosition().y][m.getPosition().x - 1];
+            iElement eDownLeft = map.getMap()[m.getPosition().y + 1][m.getPosition().x - 1];
+            if (eDown instanceof Air || eDown instanceof iCharacter) {
+                if (!m.isLocked()) {
+                    moveElement(Direction.DOWN, m);
+                }
+                m.setLocked(false);
+            } else if (eDown instanceof Boulder) {
+                if ((eDownRight instanceof Air || eDownRight instanceof iCharacter) && (eRight instanceof Air || eRight instanceof iCharacter)) {
+                    if (!m.isLocked()) {
+                        moveElement(Direction.RIGHT, m);
+                    }
+                    m.setLocked(false);
+                } else if ((eDownLeft instanceof Air || eDownLeft instanceof iCharacter) && (eLeft instanceof Air || eLeft instanceof iCharacter)) {
+                    if (!m.isLocked()) {
+                        moveElement(Direction.LEFT, m);
+                    }
+                    m.setLocked(false);
+                }  else {
+                    m.setLocked(true);
+                }
+            } else {
+                m.setLocked(true);
             }
         }
     }
@@ -115,10 +145,11 @@ public class MainController implements iController, Runnable, Observer, ActionLi
                     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
             });*/
+            if(!gameOver){
             moveElement((Direction) arg, map.getPlayer());
-            moveElement((Direction) arg, map.getMobs().get(0));
-            moveElement((Direction) arg, map.getBoulders().get(0));
-            applyGravity();
+            //moveElement((Direction) arg, map.getMobs().get(0));
+            //moveElement((Direction) arg, map.getBoulders().get(0));
+            applyGravity();}
         }
     }
 
@@ -147,85 +178,149 @@ public class MainController implements iController, Runnable, Observer, ActionLi
                 if (inElement instanceof iCharacter) {
                     if (inElement instanceof iPlayer) {
                         System.out.println("gameover killed by mob");
+                        gameOver = true;
                     }
                 } else {
                     if (outElement instanceof iPlayer) {
                         System.out.println("gameover crushed");
+                        gameOver = true;
                     } else {
+                        view.doMobDeathAnimation(outElement);
+                        iElement diamond = new Diamond();
+                        diamond.setPosition(outElement.getPosition());
+                        diamond.setLevel(map.getLevel());
+                        map.getMobs().remove(outElement);
+                        map.getBoulders().add((iMovable)diamond);
+                        outElement = diamond;
+                        map.getMap()[outElement.getPosition().y][outElement.getPosition().x] = diamond;
+                        view.getLabels()[outElement.getPosition().y][outElement.getPosition().x].setIcon(diamond.getSprite().getStandingIcon());
                         System.out.println("mob dies");
                         System.out.println("convert to diamond");
+                        map.getPlayer().setScore((map.getPlayer().getScore()+100));
+                        view.setScore(map.getPlayer().getScore());
+                        System.out.println("label unavailable so here's your score :"+((iPlayer)inElement).getScore());
+                        return false;
                     }
                 }
             }
         }
-        return outElement.isTraversable();
+
+        if (inElement instanceof MovableBlock) {
+            //air, char
+            return (outElement instanceof Air || outElement instanceof iCharacter);
+
+        } else if (inElement instanceof iCharacter) {
+            if (inElement instanceof iPlayer) {
+                if(outElement instanceof Diamond){
+                    ((iPlayer) inElement).setDiamondCount(((iPlayer)inElement).getDiamondCount()+1);
+                    ((iPlayer) inElement).setScore(((iPlayer)inElement).getScore()+100);
+                    view.setScore(((iPlayer)inElement).getScore());
+                    System.out.println("label unavailable so here's your score :"+((iPlayer)inElement).getScore());
+                }
+                //dirt, air, diamond
+                return (outElement instanceof Air || outElement instanceof Diamond || outElement instanceof Dirt);
+
+            } else {
+                return (outElement instanceof Air || outElement instanceof iCharacter);
+
+                //air,  character 
+            }
+        } else {
+            System.out.println(inElement.toString() + "just moved and shouldn't have");
+            return outElement.isTraversable();
+        }
     }
 
-    public boolean moveElement(Direction direction, iElement element) {
-        SwingWorker<Boolean, Boolean> worker = new SwingWorker<Boolean, Boolean>() {
-            @Override
-            protected Boolean doInBackground() throws Exception {
-                Boolean b = SwingUtilities.isEventDispatchThread();
-                iElement air = new Air(map.getLevel());
-                Point p = element.getPosition();
-                ImageIcon icon = (ImageIcon) view.getLabels()[p.y][p.x].getIcon();
-                iElement outElement;
-                switch (direction) {
-                    case UP:
-                        outElement = map.getMap()[element.getPosition().y - 1][element.getPosition().x];// = air;
-                        if (canGo(element, outElement)) {
-                            map.getMap()[element.getPosition().y][element.getPosition().x] = air;
-                            outElement = air;
-                            element.setPosition(new Point(element.getPosition().x, element.getPosition().y - 1));
-                        }
-                        //air setposition
-                        //view.getLabels()[element.getPosition().y - 1][element.getPosition().x].setIcon(element.getSprite().getStandingIcon());
-                        //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
+    private void doMobDeathAnimation(iElement e){
+        if(e instanceof Mob){
+            SwingWorker<Void,Void> worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    Star star = new Star();
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            //view.getLabels()[e.getPosition().y - 1][e.getPosition().x-1].setIcon(star.getSprite().getStandingIcon());
+                            
+                            //map.getMap()[e.getPosition().y-1][e.getPosition().x-1] = star;
 
-                        break;
+                        }
+                    }
+                    return null;
+                }
 
-                    case DOWN:
-                        outElement = map.getMap()[element.getPosition().y + 1][element.getPosition().x];
-                        if (canGo(element, outElement)) {
-                            map.getMap()[element.getPosition().y][element.getPosition().x] = air;
-                            element.setPosition(new Point(element.getPosition().x, element.getPosition().y + 1));
-                            outElement = air;
-                        }
-                        //air setposition
-                        //view.getLabels()[element.getPosition().y + 1][element.getPosition().x].setIcon(element.getSprite().getStandingIcon());
-                        //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
-                        break;
-                    case RIGHT:
-                        outElement = map.getMap()[element.getPosition().y][element.getPosition().x + 1];
-                        if (canGo(element, outElement)) {
-                            map.getMap()[element.getPosition().y][element.getPosition().x] = air;
-                            element.setPosition(new Point(element.getPosition().x + 1, element.getPosition().y));
-                            outElement = air;
-                        }
-                        //view.getLabels()[element.getPosition().y][element.getPosition().x + 1].setIcon(element.getSprite().getStandingIcon());
-                        //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
-                        //air setposition
-                        break;
-                    case LEFT:
-                        outElement = map.getMap()[element.getPosition().y][element.getPosition().x - 1];
-                        if (canGo(element, outElement)) {
-                            map.getMap()[element.getPosition().y][element.getPosition().x] = air;
-                            element.setPosition(new Point(element.getPosition().x - 1, element.getPosition().y));
-                            outElement = air;
-                        }
-                        //view.getLabels()[element.getPosition().y][element.getPosition().x - 1].setIcon(element.getSprite().getStandingIcon());
-                        //view.getLabels()[element.getPosition().y][element.getPosition().x].setIcon(air.getSprite().getStandingIcon());
-                        //air setposition
-                        break;
-                    case STAND:
-                        break;
+                @Override
+                protected void done() {
+                    super.done(); //To change body of generated methods, choose Tools | Templates.
                 }
                 
                 
-                //TODO comment if animations are activated
-                map.getMap()[element.getPosition().y][element.getPosition().x] = element;
-                //TODO uncomment to reactivate animations
-                /*
+            };
+            worker.run();
+        } else {
+            System.out.println("we tried to kill "+e.toString()+" and it shouldn't have happenned");
+        }
+    }
+    
+    public void moveElement(Direction direction, iElement element) {
+        /*SwingWorker<Boolean, Boolean> worker = new SwingWorker<Boolean, Boolean>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {*/
+        Boolean b = SwingUtilities.isEventDispatchThread();
+        iElement air = new Air(map.getLevel());
+        Point p = element.getPosition();
+        ImageIcon icon = (ImageIcon) view.getLabels()[p.y][p.x].getIcon();
+        iElement outElement = null;
+        switch (direction) {
+            case UP:
+                outElement = map.getMap()[element.getPosition().y - 1][element.getPosition().x];// = air;
+                if (canGo(element, outElement)) {
+                    map.getMap()[element.getPosition().y][element.getPosition().x] = air;
+                    outElement = air;
+                    element.setPosition(new Point(element.getPosition().x, element.getPosition().y - 1));
+                    map.getMap()[element.getPosition().y][element.getPosition().x] = element;
+
+                }
+                break;
+
+            case DOWN:
+                outElement = map.getMap()[element.getPosition().y + 1][element.getPosition().x];
+                if (canGo(element, outElement)) {
+                    map.getMap()[element.getPosition().y][element.getPosition().x] = air;
+                    element.setPosition(new Point(element.getPosition().x, element.getPosition().y + 1));
+                    outElement = air;
+                    map.getMap()[element.getPosition().y][element.getPosition().x] = element;
+
+                }
+                break;
+            case RIGHT:
+                outElement = map.getMap()[element.getPosition().y][element.getPosition().x + 1];
+                if (canGo(element, outElement)) {
+                    map.getMap()[element.getPosition().y][element.getPosition().x] = air;
+                    element.setPosition(new Point(element.getPosition().x + 1, element.getPosition().y));
+                    outElement = air;
+                    map.getMap()[element.getPosition().y][element.getPosition().x] = element;
+
+                }
+                break;
+            case LEFT:
+                outElement = map.getMap()[element.getPosition().y][element.getPosition().x - 1];
+                if (canGo(element, outElement)) {
+                    map.getMap()[element.getPosition().y][element.getPosition().x] = air;
+                    element.setPosition(new Point(element.getPosition().x - 1, element.getPosition().y));
+                    outElement = air;
+                    map.getMap()[element.getPosition().y][element.getPosition().x] = element;
+
+                }
+                break;
+            case STAND:
+                outElement = map.getMap()[element.getPosition().y][element.getPosition().x];
+                break;
+        }
+        //colide(element, outElement);
+        //TODO comment if animations are activated
+        //map.getMap()[element.getPosition().y][element.getPosition().x] = element;
+        //TODO uncomment to reactivate animations
+        /*
                 ListenableFuture<Void> future = view.translate(p, icon, direction);
                 Futures.addCallback(future,
                         new FutureCallback<Void>() {
@@ -241,15 +336,16 @@ public class MainController implements iController, Runnable, Observer, ActionLi
                     }
                 }
                 );*/
-
+ /*
                 return true;
             }
         };
         worker.execute();
+        
 
-        return true;
+        return true;*/
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         view.doAnimation();

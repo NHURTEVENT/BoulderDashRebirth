@@ -17,7 +17,7 @@ public interface iMap {
     ArrayList<iElement> getElements();
     ArrayList<iCharacter> getMobs();
     ArrayList<iMovable> getBoulders();
-    iCharacter getPlayer();
+    iPlayer getPlayer();
     Dimension getSize();
     int getLevel();
     iElement[][] getMap();

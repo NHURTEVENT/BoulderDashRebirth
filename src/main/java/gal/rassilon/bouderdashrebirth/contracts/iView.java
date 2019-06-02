@@ -18,4 +18,6 @@ public interface iView{
     ListenableFuture<Void> translate(Point position, ImageIcon icon, Direction direction);
     JLabel[][] getLabels();
     void doAnimation();
+    void doMobDeathAnimation(iElement e);
+    void setScore(int score);
 }

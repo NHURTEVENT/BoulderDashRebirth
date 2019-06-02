@@ -10,6 +10,7 @@ import gal.rassilon.bouderdashrebirth.contracts.iDAO;
 import gal.rassilon.bouderdashrebirth.contracts.iElement;
 import gal.rassilon.bouderdashrebirth.contracts.iMap;
 import gal.rassilon.bouderdashrebirth.contracts.iMovable;
+import gal.rassilon.bouderdashrebirth.contracts.iPlayer;
 import gal.rassilon.bouderdashrebirth.dao.DAO;
 import gal.rassilon.bouderdashrebirth.model.map.element.characters.Player;
 import java.awt.Dimension;
@@ -26,7 +27,7 @@ public class Map implements iMap{
     ArrayList<iElement> elementsOnTheMap;
     ArrayList<iCharacter> charactersOnTheMap;
     ArrayList<iMovable> bouldersOnTheMap;
-    iCharacter player;
+    iPlayer player;
     int level;
     
     
@@ -65,7 +66,7 @@ public class Map implements iMap{
     }
 
     @Override
-    public iCharacter getPlayer() {
+    public iPlayer getPlayer() {
         return player;
     }
 
